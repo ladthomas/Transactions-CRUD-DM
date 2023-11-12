@@ -2,14 +2,14 @@
 session_start();
 
 // Vérifier si l'utilisateur n'est pas connecté, rediriger vers la page de connexion
-if (!isset($_SESSION['user'])) {
-    header('Location: /login');
-    exit;
-}
+//if (!isset($_SESSION['user'])) {
+    //header('Location: /view/login');
+   // exit;
+//}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $amount = $_POST['amount'];
-    $label = $_POST['label']; // Add this line to retrieve the label from the form
+    $label = $_POST['label']; 
 
     // Vérifier si les champs du montant et du libellé ne sont pas vides
     if (empty($amount) || empty($label)) {
@@ -31,8 +31,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         // Préparer la requête pour insérer la transaction avec le libellé
-        $stmt = $conn->prepare("INSERT INTO transactions (amount, label, user_id) VALUES (?, ?, ?)");
-        $stmt->bind_param("dsi", $amount, $label, $_SESSION['user']['user_id']); // Update the "bind_param" line
+        $stmt = $conn->prepare("INSERT INTO transactions (user_id, label, amount) VALUES (?, ?, ?)");
+        $stmt->bind_param("isd", $_SESSION['user']['user_id'], $label, $amount); // Update the "bind_param" line
 
         // Exécuter la requête
         if ($stmt->execute()) {
@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $conn->close();
 
             // Rediriger vers la liste des transactions après la création
-            header('Location: /transactions');
+            header('Location: / transaction_create.php');
             exit;
         } else {
             echo 'Erreur lors de l\'enregistrement de la transaction.';
