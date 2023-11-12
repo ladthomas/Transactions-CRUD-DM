@@ -9,10 +9,11 @@ if (!isset($_SESSION['user'])) {
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $amount = $_POST['amount'];
+    $label = $_POST['label']; // Add this line to retrieve the label from the form
 
-    // Vérifier si le champ du montant est vide
-    if (empty($amount)) {
-        echo 'Le champ montant est obligatoire.';
+    // Vérifier si les champs du montant et du libellé ne sont pas vides
+    if (empty($amount) || empty($label)) {
+        echo 'Les champs montant et libellé sont obligatoires.';
     } else {
         // Ajoutez votre logique de création de transaction ici
 
@@ -29,9 +30,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             die("Erreur de connexion à la base de données: " . $conn->connect_error);
         }
 
-        // Préparer la requête pour insérer la transaction
-        $stmt = $conn->prepare("INSERT INTO transactions (amount, user_id) VALUES (?, ?)");
-        $stmt->bind_param("di", $amount, $_SESSION['user']['user_id']);
+        // Préparer la requête pour insérer la transaction avec le libellé
+        $stmt = $conn->prepare("INSERT INTO transactions (amount, label, user_id) VALUES (?, ?, ?)");
+        $stmt->bind_param("dsi", $amount, $label, $_SESSION['user']['user_id']); // Update the "bind_param" line
 
         // Exécuter la requête
         if ($stmt->execute()) {
@@ -65,6 +66,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <form method="post" action="/transactions">
         <label for="amount">Montant:</label>
         <input type="text" id="amount" name="amount" required><br>
+
+        <!-- pour ajouter libellé de la transaction  -->
+        <label for="label">Libellé:</label>
+        <input type="text" id="label" name="label" required><br>
+
         <!-- Ajoutez d'autres champs pour votre transaction -->
         <input type="submit" value="Créer la transaction">
     </form>

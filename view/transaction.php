@@ -8,6 +8,7 @@ if (!isset($_SESSION['user_logged_in']) || $_SESSION['user_logged_in'] !== "1") 
     header("Location: ../public/index.php");
     exit();
 }
+include('controller/Transactions/transaction_edit.php');
 ?>
 
 <!DOCTYPE html>
